@@ -1,28 +1,44 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { FirestoreCollection } from 'react-firestore';
+import ReactLoading from 'react-loading';
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <FirestoreCollection
+        path="users"
+        sort="name"
+        render={({ isLoading, data }) => {
+          return isLoading ? (
+            <div style={styles.loading}>
+              <ReactLoading type="bars" color="#000" height="30%" width="30%"  />
+            </div>
+          ) : (
+            <div>
+              <h1>Users</h1>
+              <ul>
+                {data.map(user => (
+                  <li key={user.id}>
+                    {user.name} - {user.requestedGift}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+        }}
+      />
     );
   }
 }
+
+const styles = {
+  loading: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+};
 
 export default App;
